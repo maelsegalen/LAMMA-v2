@@ -1,4 +1,4 @@
-# xmm-unity-windows
+# LAMMA v2
 
 This project is the follow-up of my previous Master's Degree Project called
 [LAMMA](https://github.com/poalopat/LAMMA).
