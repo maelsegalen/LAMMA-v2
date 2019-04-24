@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using Kinect = Windows.Kinect;
+
 
 public class XMM_LAMMA : MonoBehaviour
 {
@@ -33,7 +35,7 @@ public class XMM_LAMMA : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //A modifier
+        //Set the current label
         if (Input.anyKey)
         {
             if (!String.IsNullOrEmpty(Input.inputString))
@@ -48,7 +50,7 @@ public class XMM_LAMMA : MonoBehaviour
             }
         }
 
-        //A conserver : lancer l'enregistrement grâce à la souris
+        //Record/Perform using the mouse
         if (Input.GetMouseButtonDown(0))
         {
             if (recordEnabled)
@@ -61,7 +63,7 @@ public class XMM_LAMMA : MonoBehaviour
             }
         }
 
-        //A conserver : idem
+        //Stop recording/performing using the mouse
         if (Input.GetMouseButtonUp(0))
         {
             if (recordEnabled)
@@ -74,12 +76,45 @@ public class XMM_LAMMA : MonoBehaviour
             }
         }
 
-        //A modifier
+        //
         if (record || filter)
         {
+
+            //TO BE ADDED
+            /*
+            List<string> Liste = new List<string>();
+        for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
+        {
+            Kinect.Joint sourceJoint = body.Joints[jt];
+            Kinect.Joint? targetJoint = null;
+            
+            if(_BoneMap.ContainsKey(jt))
+            {
+                targetJoint = body.Joints[_BoneMap[jt]];
+            }
+            
+            Transform jointObj = bodyObject.transform.Find(jt.ToString());
+            jointObj.localPosition = GetVector3FromJoint(sourceJoint);
+            
+            if (jt == Kinect.JointType.FootRight || jt == Kinect.JointType.AnkleRight || jt == Kinect.JointType.KneeRight || jt == Kinect.JointType.HipRight)
+            {
+                print(jt.ToString());
+                print(jointObj.localPosition);
+                Liste.Add(jointObj.localPosition[0].ToString());
+                Liste.Add(jointObj.localPosition[1].ToString());
+                Liste.Add(jointObj.localPosition[2].ToString());
+                if (Liste.Count==12)
+                {
+                    Liste.ForEach(item => print(item));
+                    Liste.Clear();
+                }
+            }*/
+
+
             mouseCoords[0] = Input.mousePosition[0];
             mouseCoords[1] = Input.mousePosition[1];
 
+            //Should be modified to get the distance of the foot only
             if (distance(mouseCoords, prevMouseCoords) > mouseDistanceThreshold)
             {
                 prevMouseCoords[0] = mouseCoords[0];
