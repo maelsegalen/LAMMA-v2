@@ -8,11 +8,47 @@ using Kinect = Windows.Kinect;
 
 public class XMM_LAMMA : MonoBehaviour
 {
-
+    private Dictionary<Kinect.JointType, Kinect.JointType> _BoneMap = new Dictionary<Kinect.JointType, Kinect.JointType>()
+    {
+        { Kinect.JointType.FootLeft, Kinect.JointType.AnkleLeft },
+        { Kinect.JointType.AnkleLeft, Kinect.JointType.KneeLeft },
+        { Kinect.JointType.KneeLeft, Kinect.JointType.HipLeft },
+        { Kinect.JointType.HipLeft, Kinect.JointType.SpineBase },
+        
+        { Kinect.JointType.FootRight, Kinect.JointType.AnkleRight },
+        { Kinect.JointType.AnkleRight, Kinect.JointType.KneeRight },
+        { Kinect.JointType.KneeRight, Kinect.JointType.HipRight },
+        { Kinect.JointType.HipRight, Kinect.JointType.SpineBase },
+        
+        { Kinect.JointType.HandTipLeft, Kinect.JointType.HandLeft },
+        { Kinect.JointType.ThumbLeft, Kinect.JointType.HandLeft },
+        { Kinect.JointType.HandLeft, Kinect.JointType.WristLeft },
+        { Kinect.JointType.WristLeft, Kinect.JointType.ElbowLeft },
+        { Kinect.JointType.ElbowLeft, Kinect.JointType.ShoulderLeft },
+        { Kinect.JointType.ShoulderLeft, Kinect.JointType.SpineShoulder },
+        
+        { Kinect.JointType.HandTipRight, Kinect.JointType.HandRight },
+        { Kinect.JointType.ThumbRight, Kinect.JointType.HandRight },
+        { Kinect.JointType.HandRight, Kinect.JointType.WristRight },
+        { Kinect.JointType.WristRight, Kinect.JointType.ElbowRight },
+        { Kinect.JointType.ElbowRight, Kinect.JointType.ShoulderRight },
+        { Kinect.JointType.ShoulderRight, Kinect.JointType.SpineShoulder },
+        
+        { Kinect.JointType.SpineBase, Kinect.JointType.SpineMid },
+        { Kinect.JointType.SpineMid, Kinect.JointType.SpineShoulder },
+        { Kinect.JointType.SpineShoulder, Kinect.JointType.Neck },
+        { Kinect.JointType.Neck, Kinect.JointType.Head },
+    };
     float mouseDistanceThreshold = 2;
     float[] prevMouseCoords = new float[2];
     float[] mouseCoords = new float[2];
     float[] mouseDelta = new float[2];
+
+    float legDistanceThreshold = 0.5; //To be adapted
+    float[] prevLegCoords = new float[9];
+    float[] legCoords = new float[9]; //Will hold the coordinates of the foot, the ankle and the knee
+    float[] legDelta = new float[9];
+
     List<float> phrase;
     bool recordEnabled = false;
     bool record = false;
@@ -80,36 +116,31 @@ public class XMM_LAMMA : MonoBehaviour
         if (record || filter)
         {
 
-            //TO BE ADDED
-            /*
             List<string> Liste = new List<string>();
-        for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
-        {
-            Kinect.Joint sourceJoint = body.Joints[jt];
-            Kinect.Joint? targetJoint = null;
-            
-            if(_BoneMap.ContainsKey(jt))
+            for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
             {
-                targetJoint = body.Joints[_BoneMap[jt]];
-            }
-            
-            Transform jointObj = bodyObject.transform.Find(jt.ToString());
-            jointObj.localPosition = GetVector3FromJoint(sourceJoint);
-            
-            if (jt == Kinect.JointType.FootRight || jt == Kinect.JointType.AnkleRight || jt == Kinect.JointType.KneeRight || jt == Kinect.JointType.HipRight)
-            {
-                print(jt.ToString());
-                print(jointObj.localPosition);
-                Liste.Add(jointObj.localPosition[0].ToString());
-                Liste.Add(jointObj.localPosition[1].ToString());
-                Liste.Add(jointObj.localPosition[2].ToString());
-                if (Liste.Count==12)
+                Kinect.Joint sourceJoint = body.Joints[jt];
+                Kinect.Joint? targetJoint = null;
+                
+                Transform jointObj = bodyObject.transform.Find(jt.ToString());
+                jointObj.localPosition = GetVector3FromJoint(sourceJoint);
+                
+                if (jt == Kinect.JointType.FootRight || jt == Kinect.JointType.AnkleRight || jt == Kinect.JointType.KneeRight || jt == Kinect.JointType.HipRight)
                 {
-                    Liste.ForEach(item => print(item));
-                    Liste.Clear();
-                }
-            }*/
 
+                    //TODO : Compute the difference between the points to avoid some orientation problem
+                    print(jt.ToString());
+                    print(jointObj.localPosition);
+                    Liste.Add(jointObj.localPosition[0].ToString());
+                    Liste.Add(jointObj.localPosition[1].ToString());
+                    Liste.Add(jointObj.localPosition[2].ToString());
+                    if (Liste.Count==12)
+                    {
+                        Liste.ForEach(item => print(item));
+                        Liste.Clear();
+                    }
+                }
+            }
 
             mouseCoords[0] = Input.mousePosition[0];
             mouseCoords[1] = Input.mousePosition[1];
@@ -153,7 +184,7 @@ public class XMM_LAMMA : MonoBehaviour
         GUI.Label(new Rect(10, 110, 200, 50), "likelihoods : " + l);
     }
 
-    //Modifer l'input de la souris par l'input de la kinect. Dimensions ok ?
+    //Modify it to get the input of the three axis of the leg. Check the dimensions.
     private void startRecording()
     {
         record = true;
@@ -188,7 +219,6 @@ public class XMM_LAMMA : MonoBehaviour
         hhmm.Reset();
     }
 
-    //WTF ?
     private float distance(float[] newPos, float[] prevPos)
     {
         mouseDelta[0] = newPos[0] - prevPos[0];
