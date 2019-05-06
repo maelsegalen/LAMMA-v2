@@ -191,4 +191,16 @@ public class BodySourceView : MonoBehaviour
     {
         return new Vector3(joint.Position.X * 10, joint.Position.Y * 10, joint.Position.Z * 10);
     }
+
+    public static Vector3 GetJointLocalPosition(Kinect.JointType jt) 
+    {
+
+        Kinect.Joint sourceJoint = body.Joints[jt];
+        Kinect.Joint? targetJoint = null;
+        
+        Transform jointObj = bodyObject.transform.Find(jt.ToString());
+        jointObj.localPosition = GetVector3FromJoint(sourceJoint);
+
+        return jointObj.localPosition;
+    }
 }

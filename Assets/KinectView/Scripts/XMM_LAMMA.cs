@@ -112,12 +112,40 @@ public class XMM_LAMMA : MonoBehaviour
             }
         }
 
-        //
+        
         if (record || filter)
         {
+            //To be added
+            //Vector3 jointPosition = BodySourceView.GetJointLocalPosition(Kinect.JointType.FootRight);
 
-            List<string> Liste = new List<string>();
-            for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
+            List<float> JointPositionList = new List<float>();
+
+            //Get the coordinates of every points of the right leg.
+            Vector3 jointPositionFootRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.FootRight)
+            Vector3 jointPositionAnkleRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.AnkleRight)
+            Vector3 jointPositionKneeRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.KneeRight)
+            Vector3 jointPositionHipRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.HipRight)
+
+
+            //Store the x,y,z coordinates in a float list, and subtract the position of the hip in order to take
+            //it as the reference.
+            JointPositionList.Add(jointPositionFootRight.localPosition[0] - jointPositionHipRight.localPosition[0]);
+            JointPositionList.Add(jointPositionFootRight.localPosition[1] - jointPositionHipRight.localPosition[0]);
+            JointPositionList.Add(jointPositionFootRight.localPosition[2] - jointPositionHipRight.localPosition[0]);
+
+            JointPositionList.Add(jointPositionAnkleRight.localPosition[0] - jointPositionHipRight.localPosition[0]);
+            JointPositionList.Add(jointPositionAnkleRight.localPosition[1] - jointPositionHipRight.localPosition[0]);
+            JointPositionList.Add(jointPositionAnkleRight.localPosition[2] - jointPositionHipRight.localPosition[0]);
+
+            JointPositionList.Add(jointPositionKneeRight.localPosition[0] - jointPositionHipRight.localPosition[0]);
+            JointPositionList.Add(jointPositionKneeRight.localPosition[1] - jointPositionHipRight.localPosition[0]);
+            JointPositionList.Add(jointPositionKneeRight.localPosition[2] - jointPositionHipRight.localPosition[0]);
+
+
+
+            //Old ways of getting joints
+            //To be deleted
+            /*for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
             {
                 Kinect.Joint sourceJoint = body.Joints[jt];
                 Kinect.Joint? targetJoint = null;
@@ -140,7 +168,7 @@ public class XMM_LAMMA : MonoBehaviour
                         Liste.Clear();
                     }
                 }
-            }
+            }*/
 
             mouseCoords[0] = Input.mousePosition[0];
             mouseCoords[1] = Input.mousePosition[1];
