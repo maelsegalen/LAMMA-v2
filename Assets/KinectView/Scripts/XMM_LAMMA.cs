@@ -44,10 +44,10 @@ public class XMM_LAMMA : MonoBehaviour
     float[] mouseCoords = new float[2];
     float[] mouseDelta = new float[2];
 
-    float legDistanceThreshold = 0.5; //To be adapted
+    float footDistanceThreshold = 0.1; //To be adapted.
     float[] prevLegCoords = new float[9];
-    float[] legCoords = new float[9]; //Will hold the coordinates of the foot, the ankle and the knee
-    float[] legDelta = new float[9];
+    float[] legCoords = new float[9]; //Will hold the coordinates of the foot, the ankle and the knee.
+
 
     List<float> phrase;
     bool recordEnabled = false;
@@ -71,6 +71,8 @@ public class XMM_LAMMA : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        updateLegCoords();
+
         //Set the current label
         if (Input.anyKey)
         {
@@ -118,75 +120,36 @@ public class XMM_LAMMA : MonoBehaviour
             //To be added
             //Vector3 jointPosition = BodySourceView.GetJointLocalPosition(Kinect.JointType.FootRight);
 
-            List<float> JointPositionList = new List<float>();
-
-            //Get the coordinates of every points of the right leg.
-            Vector3 jointPositionFootRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.FootRight)
-            Vector3 jointPositionAnkleRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.AnkleRight)
-            Vector3 jointPositionKneeRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.KneeRight)
-            Vector3 jointPositionHipRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.HipRight)
-
-
-            //Store the x,y,z coordinates in a float list, and subtract the position of the hip in order to take
-            //it as the reference.
-            JointPositionList.Add(jointPositionFootRight.localPosition[0] - jointPositionHipRight.localPosition[0]);
-            JointPositionList.Add(jointPositionFootRight.localPosition[1] - jointPositionHipRight.localPosition[0]);
-            JointPositionList.Add(jointPositionFootRight.localPosition[2] - jointPositionHipRight.localPosition[0]);
-
-            JointPositionList.Add(jointPositionAnkleRight.localPosition[0] - jointPositionHipRight.localPosition[0]);
-            JointPositionList.Add(jointPositionAnkleRight.localPosition[1] - jointPositionHipRight.localPosition[0]);
-            JointPositionList.Add(jointPositionAnkleRight.localPosition[2] - jointPositionHipRight.localPosition[0]);
-
-            JointPositionList.Add(jointPositionKneeRight.localPosition[0] - jointPositionHipRight.localPosition[0]);
-            JointPositionList.Add(jointPositionKneeRight.localPosition[1] - jointPositionHipRight.localPosition[0]);
-            JointPositionList.Add(jointPositionKneeRight.localPosition[2] - jointPositionHipRight.localPosition[0]);
-
-
-
-            //Old ways of getting joints
-            //To be deleted
-            /*for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
-            {
-                Kinect.Joint sourceJoint = body.Joints[jt];
-                Kinect.Joint? targetJoint = null;
-                
-                Transform jointObj = bodyObject.transform.Find(jt.ToString());
-                jointObj.localPosition = GetVector3FromJoint(sourceJoint);
-                
-                if (jt == Kinect.JointType.FootRight || jt == Kinect.JointType.AnkleRight || jt == Kinect.JointType.KneeRight || jt == Kinect.JointType.HipRight)
-                {
-
-                    //TODO : Compute the difference between the points to avoid some orientation problem
-                    print(jt.ToString());
-                    print(jointObj.localPosition);
-                    Liste.Add(jointObj.localPosition[0].ToString());
-                    Liste.Add(jointObj.localPosition[1].ToString());
-                    Liste.Add(jointObj.localPosition[2].ToString());
-                    if (Liste.Count==12)
-                    {
-                        Liste.ForEach(item => print(item));
-                        Liste.Clear();
-                    }
-                }
-            }*/
-
-            mouseCoords[0] = Input.mousePosition[0];
-            mouseCoords[1] = Input.mousePosition[1];
 
             //Should be modified to get the distance of the foot only
-            if (distance(mouseCoords, prevMouseCoords) > mouseDistanceThreshold)
+            if (distanceLeg(legCoords, prevLegCoords) > footDistanceThreshold)
             {
-                prevMouseCoords[0] = mouseCoords[0];
-                prevMouseCoords[1] = mouseCoords[1];
+                prevLegCoords[0] = legCoords[0];
+                prevLegCoords[1] = legCoords[1];
+                prevLegCoords[2] = legCoords[2];
+                prevLegCoords[3] = legCoords[3];
+                prevLegCoords[4] = legCoords[4];
+                prevLegCoords[5] = legCoords[5];
+                prevLegCoords[6] = legCoords[6];
+                prevLegCoords[7] = legCoords[7];
+                prevLegCoords[8] = legCoords[8];
 
                 if (record)
                 {
-                    phrase.Add(mouseDelta[0]);
-                    phrase.Add(mouseDelta[1]);
+                    phrase.Add(legDelta[0]);
+                    phrase.Add(legDelta[1]);
+                    phrase.Add(legDelta[2]);
+                    phrase.Add(legDelta[3]);
+                    phrase.Add(legDelta[4]);
+                    phrase.Add(legDelta[5]);
+                    phrase.Add(legDelta[6]);
+                    phrase.Add(legDelta[7]);
+                    phrase.Add(legDelta[8]);
+
                 }
                 else
                 { //filter
-                    hhmm.Filter(mouseDelta);
+                    hhmm.Filter(legDelta);
                     likeliest = hhmm.GetLikeliest();
                     likelihoods = hhmm.GetLikelihoods();
                 }
@@ -217,8 +180,8 @@ public class XMM_LAMMA : MonoBehaviour
     {
         record = true;
         phrase = new List<float>();
-        prevMouseCoords[0] = Input.mousePosition[0];
-        prevMouseCoords[1] = Input.mousePosition[1];
+        //Kinect coordinates are already updated at the beginning of the "update" loop.
+        prevLegCoords = legCoords;
     }
 
     //Idem
@@ -238,6 +201,8 @@ public class XMM_LAMMA : MonoBehaviour
         filter = true;
         prevMouseCoords[0] = Input.mousePosition[0];
         prevMouseCoords[1] = Input.mousePosition[1];
+        //Kinect coordinates are already updated at the beginning of the "update" loop.
+        prevLegCoords = legCoords;
     }
 
     //Idem
@@ -256,7 +221,26 @@ public class XMM_LAMMA : MonoBehaviour
                                 mouseDelta[1] * mouseDelta[1]);
     }
 
-    //WTF ?
+    //Computes the difference between the previous leg coordinates and the current one,
+    //and returns the distance made by the foot, in order to trigger the system.
+    private float distanceLeg(float[] newPos, float[] prevPos)
+    {
+        legDelta[0] = newPos[0] - prevPos[0];
+        legDelta[1] = newPos[1] - prevPos[1];
+        legDelta[2] = newPos[2] - prevPos[2];
+        legDelta[3] = newPos[3] - prevPos[3];
+        legDelta[4] = newPos[4] - prevPos[4];
+        legDelta[5] = newPos[5] - prevPos[5];
+        legDelta[6] = newPos[6] - prevPos[6];
+        legDelta[7] = newPos[7] - prevPos[7];
+        legDelta[8] = newPos[8] - prevPos[8];
+
+        //Returns only the distance of the foot to trigger.
+        return (float)Math.Sqrt(legDelta[0] * legDelta[0] +
+                                legDelta[1] * legDelta[1] +
+                                legDelta[2] * legDelta[2]);
+    }
+
     private void logLabels()
     {
         string[] labels = ts.GetLabels();
@@ -265,5 +249,25 @@ public class XMM_LAMMA : MonoBehaviour
         {
             Debug.Log("label " + i + " : " + labels[i]);
         }
+    }
+
+    private void updateLegCoords()
+    {
+        //Get the coordinates of every points of the right leg.
+        Vector3 jointPositionFootRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.FootRight)
+        Vector3 jointPositionAnkleRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.AnkleRight)
+        Vector3 jointPositionKneeRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.KneeRight)
+        Vector3 jointPositionHipRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.HipRight)
+
+        legCoords[0] = jointPositionFootRight.localPosition[0] - jointPositionHipRight.localPosition[0];
+        legCoords[1] = jointPositionFootRight.localPosition[1] - jointPositionHipRight.localPosition[1];
+        legCoords[2] = jointPositionFootRight.localPosition[2] - jointPositionHipRight.localPosition[2];
+        legCoords[3] = jointPositionAnkleRight.localPosition[0] - jointPositionHipRight.localPosition[0]
+        legCoords[4] = jointPositionAnkleRight.localPosition[1] - jointPositionHipRight.localPosition[1]
+        legCoords[5] = jointPositionAnkleRight.localPosition[2] - jointPositionHipRight.localPosition[2]
+        legCoords[6] = jointPositionKneeRight.localPosition[0] - jointPositionHipRight.localPosition[0]
+        legCoords[7] = jointPositionKneeRight.localPosition[1] - jointPositionHipRight.localPosition[1]
+        legCoords[8] = jointPositionKneeRight.localPosition[2] - jointPositionHipRight.localPosition[2]
+
     }
 }
