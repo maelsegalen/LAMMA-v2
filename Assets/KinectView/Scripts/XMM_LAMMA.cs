@@ -39,10 +39,11 @@ public class XMM_LAMMA : MonoBehaviour
         { Kinect.JointType.SpineShoulder, Kinect.JointType.Neck },
         { Kinect.JointType.Neck, Kinect.JointType.Head },
     };
-    float mouseDistanceThreshold = 2;
+    //Will not be used anymore.
+    /*float mouseDistanceThreshold = 2;
     float[] prevMouseCoords = new float[2];
     float[] mouseCoords = new float[2];
-    float[] mouseDelta = new float[2];
+    float[] mouseDelta = new float[2];*/
 
     float footDistanceThreshold = 0.1; //To be adapted.
     float[] prevLegCoords = new float[9];
@@ -71,6 +72,7 @@ public class XMM_LAMMA : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Get the latest Kinect coordinates.
         updateLegCoords();
 
         //Set the current label
@@ -181,7 +183,15 @@ public class XMM_LAMMA : MonoBehaviour
         record = true;
         phrase = new List<float>();
         //Kinect coordinates are already updated at the beginning of the "update" loop.
-        prevLegCoords = legCoords;
+        prevLegCoords[0] = legCoords[0];
+        prevLegCoords[1] = legCoords[1];
+        prevLegCoords[2] = legCoords[2];
+        prevLegCoords[3] = legCoords[3];
+        prevLegCoords[4] = legCoords[4];
+        prevLegCoords[5] = legCoords[5];
+        prevLegCoords[6] = legCoords[6];
+        prevLegCoords[7] = legCoords[7];
+        prevLegCoords[8] = legCoords[8];
     }
 
     //Idem
@@ -199,10 +209,17 @@ public class XMM_LAMMA : MonoBehaviour
     private void startFiltering()
     {
         filter = true;
-        prevMouseCoords[0] = Input.mousePosition[0];
-        prevMouseCoords[1] = Input.mousePosition[1];
         //Kinect coordinates are already updated at the beginning of the "update" loop.
-        prevLegCoords = legCoords;
+        prevLegCoords[0] = legCoords[0];
+        prevLegCoords[1] = legCoords[1];
+        prevLegCoords[2] = legCoords[2];
+        prevLegCoords[3] = legCoords[3];
+        prevLegCoords[4] = legCoords[4];
+        prevLegCoords[5] = legCoords[5];
+        prevLegCoords[6] = legCoords[6];
+        prevLegCoords[7] = legCoords[7];
+        prevLegCoords[8] = legCoords[8];
+
     }
 
     //Idem
@@ -212,14 +229,15 @@ public class XMM_LAMMA : MonoBehaviour
         hhmm.Reset();
     }
 
-    private float distance(float[] newPos, float[] prevPos)
+    //Will not be used anymore.
+    /*private float distance(float[] newPos, float[] prevPos)
     {
         mouseDelta[0] = newPos[0] - prevPos[0];
         mouseDelta[1] = newPos[1] - prevPos[1];
 
         return (float)Math.Sqrt(mouseDelta[0] * mouseDelta[0] +
                                 mouseDelta[1] * mouseDelta[1]);
-    }
+    }*/
 
     //Computes the difference between the previous leg coordinates and the current one,
     //and returns the distance made by the foot, in order to trigger the system.
