@@ -48,7 +48,7 @@ public class XMM_LAMMA : MonoBehaviour
     float footDistanceThreshold = 0.1; //To be adapted.
     float[] prevLegCoords = new float[9];
     float[] legCoords = new float[9]; //Will hold the coordinates of the foot, the ankle and the knee.
-
+    float[] legDelta = new float[9];
 
     List<float> phrase;
     bool recordEnabled = false;
@@ -272,20 +272,20 @@ public class XMM_LAMMA : MonoBehaviour
     private void updateLegCoords()
     {
         //Get the coordinates of every points of the right leg.
-        Vector3 jointPositionFootRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.FootRight)
-        Vector3 jointPositionAnkleRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.AnkleRight)
-        Vector3 jointPositionKneeRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.KneeRight)
-        Vector3 jointPositionHipRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.HipRight)
+        Vector3 jointPositionFootRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.FootRight);
+        Vector3 jointPositionAnkleRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.AnkleRight);
+        Vector3 jointPositionKneeRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.KneeRight);
+        Vector3 jointPositionHipRight = BodySourceView.GetJointLocalPosition(Kinect.JointType.HipRight);
 
-        legCoords[0] = jointPositionFootRight.localPosition[0] - jointPositionHipRight.localPosition[0];
-        legCoords[1] = jointPositionFootRight.localPosition[1] - jointPositionHipRight.localPosition[1];
-        legCoords[2] = jointPositionFootRight.localPosition[2] - jointPositionHipRight.localPosition[2];
-        legCoords[3] = jointPositionAnkleRight.localPosition[0] - jointPositionHipRight.localPosition[0]
-        legCoords[4] = jointPositionAnkleRight.localPosition[1] - jointPositionHipRight.localPosition[1]
-        legCoords[5] = jointPositionAnkleRight.localPosition[2] - jointPositionHipRight.localPosition[2]
-        legCoords[6] = jointPositionKneeRight.localPosition[0] - jointPositionHipRight.localPosition[0]
-        legCoords[7] = jointPositionKneeRight.localPosition[1] - jointPositionHipRight.localPosition[1]
-        legCoords[8] = jointPositionKneeRight.localPosition[2] - jointPositionHipRight.localPosition[2]
+        legCoords[0] = jointPositionFootRight[0] - jointPositionHipRight[0];
+        legCoords[1] = jointPositionFootRight[1] - jointPositionHipRight[1];
+        legCoords[2] = jointPositionFootRight[2] - jointPositionHipRight[2];
+        legCoords[3] = jointPositionAnkleRight[0] - jointPositionHipRight[0];
+        legCoords[4] = jointPositionAnkleRight[1] - jointPositionHipRight[1];
+        legCoords[5] = jointPositionAnkleRight[2] - jointPositionHipRight[2];
+        legCoords[6] = jointPositionKneeRight[0] - jointPositionHipRight[0];
+        legCoords[7] = jointPositionKneeRight[1] - jointPositionHipRight[1];
+        legCoords[8] = jointPositionKneeRight[2] - jointPositionHipRight[2];
 
     }
 }
