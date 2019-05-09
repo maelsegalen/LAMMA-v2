@@ -7,10 +7,16 @@ public class BodySourceView : MonoBehaviour
 {
     public Material BoneMaterial;
     public GameObject BodySourceManager;
-    
+
     private Dictionary<ulong, GameObject> _Bodies = new Dictionary<ulong, GameObject>();
     private BodySourceManager _BodyManager;
     
+    private Vector3 _FootRight;
+    private Vector3 _AnkleRight;
+    private Vector3 _KneeRight;
+    private Vector3 _HipRight;
+
+
     private Dictionary<Kinect.JointType, Kinect.JointType> _BoneMap = new Dictionary<Kinect.JointType, Kinect.JointType>()
     {
         { Kinect.JointType.FootLeft, Kinect.JointType.AnkleLeft },
@@ -144,19 +150,23 @@ public class BodySourceView : MonoBehaviour
             Transform jointObj = bodyObject.transform.Find(jt.ToString());
             jointObj.localPosition = GetVector3FromJoint(sourceJoint);
             
-            if (jt == Kinect.JointType.FootRight || jt == Kinect.JointType.AnkleRight || jt == Kinect.JointType.KneeRight || jt == Kinect.JointType.HipRight)
+            if (jt == Kinect.JointType.FootRight)
             {
-                print(jt.ToString());
-                print(jointObj.localPosition);
-                Liste.Add(jointObj.localPosition[0].ToString());
-                Liste.Add(jointObj.localPosition[1].ToString());
-                Liste.Add(jointObj.localPosition[2].ToString());
-                if (Liste.Count==12)
-                {
-                    Liste.ForEach(item => print(item));
-                    Liste.Clear();
-                }
+                _FootRight = GetVector3FromJoint(sourceJoint);
+            } 
+            if (jt == Kinect.JointType.AnkleRight) 
+            {
+                _AnkleRight = GetVector3FromJoint(sourceJoint);
+            } 
+            if (jt == Kinect.JointType.KneeRight) 
+            {
+                _KneeRight = GetVector3FromJoint(sourceJoint);
+            } 
+            if (jt == Kinect.JointType.HipRight) 
+            {
+                _HipRight = GetVector3FromJoint(sourceJoint);
             }
+
 
             LineRenderer lr = jointObj.GetComponent<LineRenderer>();
             if(targetJoint.HasValue)
@@ -195,12 +205,21 @@ public class BodySourceView : MonoBehaviour
     public static Vector3 GetJointLocalPosition(Kinect.JointType jt) 
     {
 
-        Kinect.Joint sourceJoint = body.Joints[jt];
-        Kinect.Joint? targetJoint = null;
-        
-        Transform jointObj = bodyObject.transform.Find(jt.ToString());
-        jointObj.localPosition = GetVector3FromJoint(sourceJoint);
-
-        return jointObj.localPosition;
+        if (jt == Kinect.JointType.FootRight) 
+        {
+            return _FootRight;
+        }
+        if (jt == Kinect.JointType.AnkleRight) 
+        {
+            return _AnkleRight;
+        }
+        if (jt == Kinect.JointType.Knee) 
+        {
+            return _KneeRight;
+        }
+        if (jt == Kinect.JointType.HipRight) 
+        {
+            return _HipRight;
+        }
     }
 }
