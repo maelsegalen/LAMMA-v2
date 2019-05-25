@@ -45,7 +45,7 @@ public class XMM_LAMMA : MonoBehaviour
     float[] mouseCoords = new float[2];
     float[] mouseDelta = new float[2];*/
 
-    float footDistanceThreshold = 0.1; //To be adapted.
+    double footDistanceThreshold = 0.1; //To be adapted.
     float[] prevLegCoords = new float[9];
     float[] legCoords = new float[9]; //Will hold the coordinates of the foot, the ankle and the knee.
     float[] legDelta = new float[9];

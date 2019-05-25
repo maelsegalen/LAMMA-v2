@@ -18,7 +18,7 @@ public class XmmInterface {
 #if UNITY_IPHONE || UNITY_XBOX360
   "__Internal"
 #else
-  "XmmEngine"
+  "libaXmmEngine"
 #endif
   ;
   //==========================================================================//

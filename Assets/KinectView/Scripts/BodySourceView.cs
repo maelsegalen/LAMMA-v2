@@ -11,10 +11,10 @@ public class BodySourceView : MonoBehaviour
     private Dictionary<ulong, GameObject> _Bodies = new Dictionary<ulong, GameObject>();
     private BodySourceManager _BodyManager;
     
-    private Vector3 _FootRight;
-    private Vector3 _AnkleRight;
-    private Vector3 _KneeRight;
-    private Vector3 _HipRight;
+    private static Vector3 _FootRight;
+    private static Vector3 _AnkleRight;
+    private static Vector3 _KneeRight;
+    private static Vector3 _HipRight;
 
 
     private Dictionary<Kinect.JointType, Kinect.JointType> _BoneMap = new Dictionary<Kinect.JointType, Kinect.JointType>()
@@ -213,13 +213,17 @@ public class BodySourceView : MonoBehaviour
         {
             return _AnkleRight;
         }
-        if (jt == Kinect.JointType.Knee) 
+        if (jt == Kinect.JointType.KneeRight) 
         {
             return _KneeRight;
         }
         if (jt == Kinect.JointType.HipRight) 
         {
             return _HipRight;
+        }
+        else
+        {
+            return new Vector3(0,0,0);
         }
     }
 }
